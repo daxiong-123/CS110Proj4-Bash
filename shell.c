@@ -6,6 +6,7 @@
 #include<string.h>
 #include<readline/readline.h>
 
+
 void print_prompt(){
     struct passwd *user;
     char host_name[100];
@@ -18,15 +19,23 @@ void print_prompt(){
         printf("%s",path);
     else
         printf("~%s",path+strlen(user->pw_dir));
-    printf("$ ");
     
 }
 
 int main(int argc, char** argv){
     char str[100];
+    char *cmdline;
+    char *cmd;
     while(1){
         print_prompt();
-        fgets(str, 100, stdin);
-        char* a = readline("$ ");
+        cmdline = readline("$ ");
+        cmd = strtok(cmdline, " ");
+        printf("%s\n", cmd);
+        if(!strcmp(cmd,"exit")){
+            free(cmdline);
+            break;
+        }
+        free(cmdline);
     }
+
 }

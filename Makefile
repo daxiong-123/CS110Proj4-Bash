@@ -1,10 +1,15 @@
 CC=gcc
-CFLAGS= -g -lreadline
+CFLAGS= -g -I /usr/lib/x86_64-linux-gnu -lreadline -ltermcap 
+
 
 all: shell
 
 parse.o: parse.c parse.h
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} -c $< -o $@ ${CFLAGS} 
 
 shell: shell.c parse.o
-	${CC} ${CFLAGS} shell.gnu
+	${CC} $^ -o $@ ${CFLAGS}
+	rm *.o
+
+clean: 
+	rm shell
