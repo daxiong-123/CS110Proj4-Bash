@@ -1,3 +1,12 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/types.h>
+#include<pwd.h>
+#include<unistd.h>
 #include<string.h>
+#include<readline/readline.h>
+#include<readline/history.h>
 
-char *parsecommand(char* cmdline);
+#define max_arg_num 100
+
+int parsecommand(char* cmdline, char **para_list, char *command);
