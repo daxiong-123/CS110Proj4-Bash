@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -g -I /usr/lib/x86_64-linux-gnu -lreadline -ltermcap 
+CFLAGS= -g 
 
 
 all: shell

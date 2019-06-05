@@ -6,6 +6,8 @@
 #include<string.h>
 #include<sys/types.h>
 #include<signal.h>
+#include<sys/wait.h>
+#include<sys/stat.h>
 
 #define max_arg_num 100
 

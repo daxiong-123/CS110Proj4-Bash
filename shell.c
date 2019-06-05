@@ -43,7 +43,7 @@ int main(int argc, char** argv){
             if(childPid == 0){
                 execvp(command[0],command);
             } else {
-                waitpid(childPid);
+                waitpid(childPid,NULL,WUNTRACED);
             }
             
         }
