@@ -1,5 +1,26 @@
 #include "parse.h"
+///////////////////////////////////////////////////////////////
+typedef struct listnode{
+    int npid;
+    struct listnode *next;
+    struct listnode *father;
+}listnode;
 
+void list_init(listnode **head){
+    *head = NULL;
+}
+
+void list_destroy(listnode **head){
+    listnode *a = *head;
+    listnode *b = NULL;
+    while(a->next != NULL){
+        b = a;
+        a = a->next;
+        free(b);
+    }
+    free(a);
+}
+///////////////////////////////////////////////////////////
 int parsecommand(char* cmdline, char **command){
 
     if(cmdline[0] == '\n') return -1; /* if input an empty line */
@@ -34,8 +55,20 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
         exit(0);
     }
 
+//jobs 输出shell当前的一系列进程,必须提供子进程的命名和PID号
     else if(strcmp(command,"jobs")){
-        
+        // a lot of bugs
+        listnode* tmp = head->next;
+        listnode *p = (listnode*)malloc(sizeof(listnode));
+        p->npid = pid;
+        printf("%s", ???);
+        strcpy(p->father, ???);
+
+        head->next = p;
+        p->next = tmp;
+
+
+
     }
     else if(strcmp(command,"kill")){
 
