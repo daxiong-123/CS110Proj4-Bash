@@ -1,25 +1,45 @@
 #include "parse.h"
 
-int parsecommand(char* cmdline, char **para_list, char *command){
+int parsecommand(char* cmdline, char **command){
 
-    if(cmdline[0] == '\0') return -1; /* if input an empty line */
+    if(cmdline[0] == '\n') return -1; /* if input an empty line */
 
-    char *cmd;
     int argnum = 0;
+    cmdline = strtok(cmdline,"\n");
 
-    cmd = strtok(cmdline," "); /* first command */
-    command = cmd; /* return command str */
+    command[0] = strtok(cmdline," "); /* first command */
+    argnum++;
 
-    while(cmd != NULL){
-        cmd = strtok(NULL," ");
-        para_list[argnum] = cmd; /* read parameter iterately */
+    while(command[argnum-1] != NULL){
+        command[argnum] = strtok(NULL," "); /* read parameter iterately */
         argnum++;
     }
 
     return argnum; /* return the num of parameter */
 }
 
+
 void ExecuteBuiltinCommand(char *command, char **para_list){
+    struct passwd* user = getpwuid(getuid());
+    if(strcmp(command,"cd")==0){
+        if(para_list[0] == NULL || strcmp(para_list[0],"~") == 0){
+            chdir(user->pw_dir);
+        }
+        else{
+            chdir(para_list[0]);
+        }  
+    }
+
+    else if(strcmp(command,"exit")){
+        exit(0);
+    }
+
+    else if(strcmp(command,"jobs")){
+        
+    }
+    else if(strcmp(command,"kill")){
+
+    }
 }
 
 int isBuildincommand(char *cmd){

@@ -2,6 +2,8 @@
 *.d
 
 shell
+out
+test.sh
 # Object files
 *.o
 *.ko
