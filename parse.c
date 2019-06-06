@@ -2,12 +2,17 @@
 
 int parsecommand(char* cmdline, char **command){
 
-    if(cmdline[0] == '\n') return -1; /* if input an empty line */
+    if(cmdline[0] == '\n') 
+        return 0; /* if input an empty line */
 
     int argnum = 0;
     cmdline = strtok(cmdline,"\n");
 
     command[0] = strtok(cmdline," "); /* first command */
+
+    if(command[0] == NULL)
+        return 0;
+
     argnum++;
 
     while(command[argnum-1] != NULL){
@@ -53,4 +58,14 @@ int isBuildincommand(char *cmd){
         return 1;
     else
         return 0;
+}
+
+int is_pipe(char **command, int argnum){
+    for(int i=0; i<argnum; i++){
+        if(command[i] != NULL && strcmp(command[i],"|") == 0){
+            command[i] = NULL;
+            return i+1;
+        }
+    }
+    return 0;
 }

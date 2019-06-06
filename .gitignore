@@ -3,7 +3,7 @@
 
 shell
 out
-test.sh
+*.sh
 # Object files
 *.o
 *.ko

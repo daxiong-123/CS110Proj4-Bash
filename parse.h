@@ -16,5 +16,5 @@
 int parsecommand(char* cmdline, char **command);
 int isBuildincommand(char *cmd);
 void ExecuteBuiltinCommand(char *command, char **para_list);
-
+int is_pipe(char **command, int argnum);
 
