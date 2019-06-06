@@ -69,7 +69,7 @@ int main(int argc, char** argv){
         else{
 
             int pos = is_pipe(command, argnum); /* determine if it needs pipe */
-            if(pos)
+            if(pos) 
                 pipe(file_fd); /* apply for a pipe */
 
             __pid_t childPid = fork();

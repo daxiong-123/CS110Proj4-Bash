@@ -4,6 +4,7 @@
 shell
 out
 *.sh
+ref.c
 # Object files
 *.o
 *.ko
