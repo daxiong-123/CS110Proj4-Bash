@@ -5,6 +5,7 @@ shell
 out
 *.sh
 ref.c
+test/
 # Object files
 *.o
 *.ko

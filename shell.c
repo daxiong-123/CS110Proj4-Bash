@@ -19,7 +19,7 @@ void print_prompt(){
     else
         printf("~%s\n",path+strlen(user->pw_dir));
     
-}
+}   
 
 void command2(int pos, char ** command){
     if(pos == 0) return; /* do not need pipe */
@@ -84,7 +84,7 @@ int main(int argc, char** argv){
 
         if(argnum == 0) 
             continue; /* if no instruction, continue */
-        redir(command);
+        
 
         if(isBuildincommand(command[0])){
             ExecuteBuiltinCommand(command[0],command+1);
@@ -99,6 +99,7 @@ int main(int argc, char** argv){
 
             /********** child thread **********/
             if(childPid == 0){ 
+                redir(command);
                 if(pos){
                     close(file_fd[0]);
                     dup2(file_fd[1],1); /* redirect stdout to pipe */
