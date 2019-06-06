@@ -44,7 +44,29 @@ void command2(int pos, char ** command){
     }
 }
 
- 
+void redir(char **command){
+    for(int i = 0; i<argnum; i++){
+        if(command[i] != NULL && strcmp(command[i],"<") == 0){
+            int input = open(command[i+1], O_CREAT|O_RDONLY,0666);
+            dup2(input,0);
+            close(input);
+            command[i] = NULL;
+        }
+        if(command[i] != NULL && strcmp(command[i],">")==0){
+            int output = open(command[i+1],O_WRONLY|O_TRUNC|O_CREAT,0666);
+            dup2(output,1);
+            close(output);
+            command[i] = NULL;
+        }
+        if(command[i] != NULL && strcmp(command[i],">>")==0){
+            int output = open(command[i+1],O_WRONLY|O_APPEND|O_CREAT,0666);
+            dup2(output,1);
+            close(output);
+            command[i] = NULL;
+        }
+    }
+}
+
 
 int main(int argc, char** argv){
     FILE *script;
@@ -62,6 +84,7 @@ int main(int argc, char** argv){
 
         if(argnum == 0) 
             continue; /* if no instruction, continue */
+        redir(command);
 
         if(isBuildincommand(command[0])){
             ExecuteBuiltinCommand(command[0],command+1);

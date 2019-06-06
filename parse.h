@@ -7,6 +7,7 @@
 #include<unistd.h>
 #include<string.h>
 #include<signal.h>
+#include<fcntl.h>
 
 #define max_arg_num 100
 
