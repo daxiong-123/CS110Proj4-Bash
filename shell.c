@@ -78,6 +78,7 @@ int main(int argc, char** argv){
         char cmdline[100];
         char *command[max_arg_num];
         char temp_cmd[100];
+        int isback = 0;
         memset(cmdline,'\0',100);
         memset(temp_cmd,'\0',100);
         memset(cmdline,0,max_arg_num);
@@ -89,7 +90,6 @@ int main(int argc, char** argv){
 
         if(argnum == 0) 
             continue; /* if no instruction, continue */
-        
 
         if(isBuildincommand(command[0])){
             ExecuteBuiltinCommand(command[0],command+1);
@@ -108,6 +108,8 @@ int main(int argc, char** argv){
                 command[argnum - 2] = NULL;
                 
                 insert(childPid, cmdline);
+
+                isback = 1;
             }
             //lichq////////
 
@@ -117,12 +119,15 @@ int main(int argc, char** argv){
                 if(pos){
                     close(file_fd[0]);
                     dup2(file_fd[1],1); /* redirect stdout to pipe */
-                } 
+                }
                 execvp(command[0],command); /* execute command and output to pipe */           
             } 
             /********** main thread **********/
             else{  
-                waitpid(childPid,NULL,WUNTRACED);
+                if(isback)
+                    signal(SIGCHLD,SIG_IGN);
+                else
+                    waitpid(childPid,NULL,WUNTRACED);
                  /* do the rest command if needed */
                 command2(pos, command,file_fd);
             }

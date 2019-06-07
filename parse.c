@@ -88,7 +88,7 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
         }  
     }
 
-    else if(strcmp(command,"exit")){
+    else if(strcmp(command,"exit") == 0){
         exit(0);
     }
 
@@ -100,12 +100,12 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
             printf("%d", i);
             printf("]");
             if(i == length - 1){printf("-  ");}
-            if(i == length){printf("+  ");}
+            else if(i == length){printf("+  ");}
             else{printf("   ");}
 
             if(kill(tmp->pid, 0) < 0){
                 printf("Done          ");
-                printf("%s", tmp->command);
+                printf("%s\n", tmp->command);
                 //del(i);
             }
             else{
@@ -113,7 +113,7 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
                 printf("Running          ");
                 printf("%s", tmp->command);
                 printf(" ");
-                printf("&");
+                printf("&\n");
             }
             tmp = tmp->next;
             i++;
