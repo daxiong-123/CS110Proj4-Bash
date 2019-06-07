@@ -33,12 +33,11 @@ void command2(int pos, char ** command, int *read){
         close(read[1]);/* close write channel to get data */
         dup2(read[0],0); /* redirect stdin to read channel */
         if(newpos)
-            dup2(fd[1],1);
+            dup2(fd[1],1);     
         execvp(command[pos],command+pos);
     }
     /********** main thread **********/
     else{
-        close(fd[1]);
         close(read[1]);
         waitpid(childpid,NULL,WUNTRACED);
         /* if there are multipule pipe, do it recursively */
