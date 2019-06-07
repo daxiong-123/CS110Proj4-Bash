@@ -32,7 +32,8 @@ void command2(int pos, char ** command, int *read){
     if(childpid == 0){ 
         close(read[1]);/* close write channel to get data */
         dup2(read[0],0); /* redirect stdin to read channel */
-        dup2(fd[1],1);
+        if(newpos)
+            dup2(fd[1],1);
         execvp(command[pos],command+pos);
     }
     /********** main thread **********/
@@ -112,7 +113,6 @@ int main(int argc, char** argv){
                 waitpid(childPid,NULL,WUNTRACED);
                  /* do the rest command if needed */
                 command2(pos, command,file_fd);
-                
             }
             
              
