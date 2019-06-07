@@ -21,26 +21,27 @@ void print_prompt(){
     
 }   
 
-void command2(int pos, char ** command){
+void command2(int pos, char ** command, int *read){
     if(pos == 0) return; /* do not need pipe */
     int newpos; 
+    int fd[2];
+    pipe(fd);
     newpos = is_pipe(command, argnum); /* determine if there is multipule pipe, return position if there is */
     __pid_t childpid = fork();
     /********** child thread **********/
-    if(childpid == 0){
-        close(file_fd[1]);  /* close write channel to get data */
-        dup2(file_fd[0],0); /* redirect stdin to read channel */
-        dup2(file_fd[1],1); /* redirect stdout to write channel */
+    if(childpid == 0){ 
+        close(read[1]);/* close write channel to get data */
+        dup2(read[0],0); /* redirect stdin to read channel */
+        dup2(fd[1],1);
         execvp(command[pos],command+pos);
     }
     /********** main thread **********/
     else{
-        close(file_fd[1]);
+        close(fd[1]);
+        close(read[1]);
         waitpid(childpid,NULL,WUNTRACED);
         /* if there are multipule pipe, do it recursively */
-        if(newpos){
-            command2(newpos,command);
-        }
+        command2(newpos,command,fd);
     }
 }
 
@@ -90,7 +91,7 @@ int main(int argc, char** argv){
             ExecuteBuiltinCommand(command[0],command+1);
         }
         else{
-
+            
             int pos = is_pipe(command, argnum); /* determine if it needs pipe */
             if(pos) 
                 pipe(file_fd); /* apply for a pipe */
@@ -98,20 +99,23 @@ int main(int argc, char** argv){
             __pid_t childPid = fork();
 
             /********** child thread **********/
-            if(childPid == 0){ 
-                redir(command);
+            if(childPid == 0){
+                redir(command); 
                 if(pos){
                     close(file_fd[0]);
                     dup2(file_fd[1],1); /* redirect stdout to pipe */
                 } 
-                execvp(command[0],command); /* execute command and output to pipe */
+                execvp(command[0],command); /* execute command and output to pipe */           
             } 
             /********** main thread **********/
-            else {  
+            else{  
                 waitpid(childPid,NULL,WUNTRACED);
-                command2(pos, command); /* do the rest command if needed */
+                 /* do the rest command if needed */
+                command2(pos, command,file_fd);
+                
             }
             
+             
         }
 
         if(!strcmp(cmdline,"exit"))
