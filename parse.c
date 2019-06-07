@@ -1,8 +1,55 @@
 #include "parse.h"
-///////////////////////////////////////////////////////////////
 
+/////////lichq/////////////
 
-///////////////////////////////////////////////////////////
+int length;
+struct listnode head;
+struct listnode tail;
+
+void create()
+{
+    length = 0;
+    head.pid = -1;
+    tail.pid = -1;
+
+    head.next = &tail;
+    head.prev = NULL;
+    tail.prev = &head;
+    tail.next = NULL;
+};
+
+void insert(__pid_t pid, char* cmdline){
+    struct listnode *new_node;
+    int i;
+    new_node = (struct listnode*) malloc(sizeof(listnode));
+    new_node->pid = pid;
+    strcpy(new_node->command, cmdline);
+    i = strlen(cmdline);
+    new_node->command[i-2] = 0;
+
+    new_node->next = &tail;
+    new_node->prev = tail.prev;
+    tail.prev->next = new_node;
+    tail.prev = new_node;
+
+    length++;
+
+}
+
+void del(int num){
+    struct listnode *tmp;
+    int i = 0;
+    while(i != num){
+        tmp = head.next;
+        i++;
+    }
+    tmp->next->prev = tmp->prev;
+    tmp->prev->next = tmp->next;
+    free(tmp);
+    length--;
+}
+//////////////lichq///////////
+
 int parsecommand(char* cmdline, char **command){
 
     if(cmdline[0] == '\n') 
@@ -28,6 +75,9 @@ int parsecommand(char* cmdline, char **command){
 
 
 void ExecuteBuiltinCommand(char *command, char **para_list){
+    struct listnode* tmp;
+    int i = 1;
+
     struct passwd* user = getpwuid(getuid());
     if(strcmp(command,"cd")==0){
         if(para_list[0] == NULL || strcmp(para_list[0],"~") == 0){
@@ -42,12 +92,37 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
         exit(0);
     }
 
-//jobs 输出shell当前的一系列进程,必须提供子进程的命名和PID号
-    else if(strcmp(command,"jobs")){
+
+    else if(strcmp(command,"jobs") == 0){
+        tmp = head.next;
+        while(tmp != &tail){
+            printf("[");
+            printf("%d", i);
+            printf("]");
+            if(i == length - 1){printf("-  ");}
+            if(i == length){printf("+  ");}
+            else{printf("   ");}
+
+            if(kill(tmp->pid, 0) < 0){
+                printf("Done          ");
+                printf("%s", tmp->command);
+                //del(i);
+            }
+            else{
+            /*if(kill(tmp->pid, 0) >= 0){*/
+                printf("Running          ");
+                printf("%s", tmp->command);
+                printf(" ");
+                printf("&");
+            }
+            tmp = tmp->next;
+            i++;
+              
+        }
 
     }
-    //需要一个num，还没仔细看是什么参数
-    else if(strcmp(command,"kill")){
+
+    else if(strcmp(command,"kill") == 0){
         
     }
 }

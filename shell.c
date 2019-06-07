@@ -72,16 +72,20 @@ void redir(char **command){
 int main(int argc, char** argv){
     FILE *script;
     script = fopen(argv[1],"r");
+    create();
 
     while(!feof(script)){
         char cmdline[100];
         char *command[max_arg_num];
+        char temp_cmd[100];
         memset(cmdline,'\0',100);
+        memset(temp_cmd,'\0',100);
         memset(cmdline,0,max_arg_num);
         /*print_prompt();  /*print prompt */
         
         fgets(cmdline,100,script); /* read a line of instruction */
-        argnum = parsecommand(cmdline,command); /* parse the instruction, get command and parameters */
+        strcpy(temp_cmd,cmdline);
+        argnum = parsecommand(temp_cmd,command); /* parse the instruction, get command and parameters */
 
         if(argnum == 0) 
             continue; /* if no instruction, continue */
@@ -97,6 +101,15 @@ int main(int argc, char** argv){
                 pipe(file_fd); /* apply for a pipe */
 
             __pid_t childPid = fork();
+
+            // lichq///
+            if(strcmp(command[argnum - 2], "&") == 0){
+
+                command[argnum - 2] = NULL;
+                
+                insert(childPid, cmdline);
+            }
+            //lichq////////
 
             /********** child thread **********/
             if(childPid == 0){
