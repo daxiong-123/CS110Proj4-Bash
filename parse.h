@@ -23,6 +23,7 @@ void create();
 
 struct listnode{
     __pid_t pid;
+    int number;
     char command[100];
     struct listnode *next;
     struct listnode *prev;

@@ -3,6 +3,7 @@
 /////////lichq/////////////
 
 int length;
+int number;
 struct listnode head;
 struct listnode tail;
 
@@ -21,11 +22,14 @@ void create()
 void insert(__pid_t pid, char* cmdline){
     struct listnode *new_node;
     int i;
+    
     new_node = (struct listnode*) malloc(sizeof(listnode));
+    new_node->number = tail.prev->number + 1;
     new_node->pid = pid;
     strcpy(new_node->command, cmdline);
     i = strlen(cmdline);
-    new_node->command[i-2] = 0;
+    new_node->command[i-2] = '\0';
+    new_node->command[i-3] = '\0';
 
     new_node->next = &tail;
     new_node->prev = tail.prev;
@@ -38,9 +42,10 @@ void insert(__pid_t pid, char* cmdline){
 
 void del(int num){
     struct listnode *tmp;
-    int i = 0;
+    tmp = head.next;
+    int i = 1;
     while(i != num){
-        tmp = head.next;
+        tmp = tmp->next;
         i++;
     }
     tmp->next->prev = tmp->prev;
@@ -77,6 +82,8 @@ int parsecommand(char* cmdline, char **command){
 void ExecuteBuiltinCommand(char *command, char **para_list){
     struct listnode* tmp;
     int i = 1;
+    int num = 1;
+    int length_copy;
 
     struct passwd* user = getpwuid(getuid());
     if(strcmp(command,"cd")==0){
@@ -95,28 +102,30 @@ void ExecuteBuiltinCommand(char *command, char **para_list){
 
     else if(strcmp(command,"jobs") == 0){
         tmp = head.next;
+        length_copy = length;
         while(tmp != &tail){
             printf("[");
-            printf("%d", i);
+            printf("%d", tmp->number);
             printf("]");
-            if(i == length - 1){printf("-  ");}
-            else if(i == length){printf("+  ");}
+            if(num == length_copy - 1){printf("-  ");}
+            else if(num == length_copy){printf("+  ");}
             else{printf("   ");}
 
             if(kill(tmp->pid, 0) < 0){
-                printf("Done          ");
+                printf("Done                    ");
                 printf("%s\n", tmp->command);
-                //del(i);
+                del(i);
+                i--;
             }
             else{
             /*if(kill(tmp->pid, 0) >= 0){*/
-                printf("Running          ");
+                printf("Running                 ");
                 printf("%s", tmp->command);
-                printf(" ");
-                printf("&\n");
+                printf(" &\n");
             }
             tmp = tmp->next;
             i++;
+            num++;
               
         }
 
